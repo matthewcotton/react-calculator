@@ -1,4 +1,5 @@
 {
+  "homepage": "https://matthewcotton.github.io/react-calculator",
   "name": "calculator",
   "version": "0.1.0",
   "private": true,
@@ -7,7 +8,6 @@
     "@testing-library/react": "^11.2.2",
     "@testing-library/user-event": "^12.3.0",
     "gh-pages": "^3.1.0",
-    "homepage": "https://matthewcotton.github.io/react-calculator/",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.1",
