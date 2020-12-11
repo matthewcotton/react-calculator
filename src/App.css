@@ -1,4 +1,4 @@
-#equals,
+/* #equals,
 #plus,
 #minus,
 #plus-minus,
@@ -17,15 +17,27 @@
 #nine,
 #clear {
   width: 100%;
+} */
+
+.full-width {
+  width: 100%;
 }
 
-.clear {
-    width: 90%
-}
-
-#equals {
+.full-height {
   height: 100%;
 }
+
+.width-90 {
+  width: 90%;
+}
+
+/* .clear {
+    width: 90%;
+} */
+
+/* #equals {
+  height: 100%;
+} */
 
 #results-box {
     min-height: 96px;
