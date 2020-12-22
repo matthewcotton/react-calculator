@@ -125,6 +125,7 @@ class Buttons extends React.Component {
     // Check if equation is not undefined
     if (equation) {
       // Evalulate the string
+      
       var answer = eval(equation);
 
       this.setState((state) => {
