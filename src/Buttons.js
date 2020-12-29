@@ -1,5 +1,4 @@
 import React from "react";
-//import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
@@ -12,6 +11,7 @@ class Buttons extends React.Component {
     this.state = {
       outputLine: "",
       resultHistory: [],
+      resultFlag: false,
     };
   }
 
@@ -20,8 +20,11 @@ class Buttons extends React.Component {
     // Check if result history is currently being shown
     if (this.state.outputLine.includes("Result History")) {
       this.clear();
-      console.log("test");
-      return;
+      var validOps = ["+", "-", "/", "*"];
+      // Check if char is an operator
+      if (validOps.includes(char)) {
+        return;
+      }
     }
 
     // If char is "clear"
@@ -48,13 +51,21 @@ class Buttons extends React.Component {
 
   // Add to output line
   addToOutput(char) {
-    // Check if char is a number and the last result is still the outputLine and not equal to whole history
-    if (
-      this.state.outputLine ===
-        this.state.resultHistory[this.state.resultHistory.length - 1] &&
-      !isNaN(char)
-    ) {
-      this.clear();
+    var validOps = ["+", "-", "/", "*", "."];
+    // Check if the resultFlag is true
+    if (this.state.resultFlag) {
+      // Check if char is a number
+      if (!isNaN(char)) {
+        this.clear();
+      }
+      // Check if char is an operator (+, -, /, *) or a dot
+      else if (validOps.includes(char)) {
+        this.setState(() => {
+          return {
+            resultFlag: false,
+          };
+        });
+      }
     }
 
     var re = /[+\-*/]/g;
@@ -91,15 +102,13 @@ class Buttons extends React.Component {
     // If equation only includes a decimal place is an empty string
     if (equation === "." || equation === "") {
       return;
-    }
-    else if (equation[0] === "." && equation[1].match(re)) {
+    } else if (equation[0] === "." && equation[1].match(re)) {
       this.clear();
       return;
     }
     // Check string is only contains valid characters
     equation = equation.replace(/[^-()\d/*+.]/g, "");
 
-    
     // Remove unwanted operators and decimal places at the end of the string
     while (equation[equation.length - 1].match(re)) {
       equation = equation.slice(0, equation.length - 1);
@@ -125,13 +134,14 @@ class Buttons extends React.Component {
     // Check if equation is not undefined
     if (equation) {
       // Evalulate the string
-      
+      // eslint-disable-next-line
       var answer = eval(equation);
 
       this.setState((state) => {
         return {
           outputLine: String(answer),
           resultHistory: state.resultHistory.concat(String(answer)),
+          resultFlag: true,
         };
       });
     }
@@ -142,6 +152,7 @@ class Buttons extends React.Component {
     this.setState(() => {
       return {
         outputLine: "",
+        resultFlag: false,
       };
     });
   }
@@ -154,12 +165,14 @@ class Buttons extends React.Component {
       this.setState(() => {
         return {
           outputLine: "-" + nums[0],
+          resultFlag: false,
         };
       });
     } else if (nums.length === 2 && nums[0] === "") {
       this.setState(() => {
         return {
           outputLine: nums[1],
+          resultFlag: false,
         };
       });
     }
@@ -169,6 +182,7 @@ class Buttons extends React.Component {
     this.setState((state) => {
       return {
         outputLine: "Result History: " + state.resultHistory.join(" | "),
+        resultFlag: false,
       };
     });
   }
@@ -202,8 +216,8 @@ class Buttons extends React.Component {
       ],
       [["=", "equals", "=", "full-width full-height", "2"]],
       [
-        ["Clear", "clear", "clear", "full-width", "6"],
-        ["Result History", "history", "history", "full-width", "6"],
+        ["Clear", "clear", "clear", "full-width full-height", "6"],
+        ["Result History", "history", "history", "full-width full-height", "6"],
       ],
     ];
     var buttonBlock = [];
@@ -225,14 +239,14 @@ class Buttons extends React.Component {
   // Create a new button
   createButton(displayValue, id, calcValue, className, colWidth) {
     return (
-      <Col xs={colWidth}>
+      <Col className="p-1" xs={colWidth}>
         <Button
           variant="info"
           id={id}
           className={className}
           onClick={() => this.pushInput(calcValue)}
         >
-          <h1> {displayValue} </h1>
+          <h1 className="button"> {displayValue} </h1>
         </Button>
       </Col>
     );
@@ -245,8 +259,8 @@ class Buttons extends React.Component {
         <Row>
           <Col className="text-right">
             <Card>
-              <Card.Body id="results-box">
-                <h1> {this.state.outputLine} </h1>
+              <Card.Body className="results-box">
+                <h1 className="result-txt"> {this.state.outputLine} </h1>
               </Card.Body>
             </Card>
           </Col>
@@ -255,20 +269,16 @@ class Buttons extends React.Component {
         <Card>
           <Card.Body>
             <Row className="justify-content-between">
-              <Col xs={10}>
+              <Col className="p-0" xs={10}>
                 <Container>
-                  <Row>{this.renderButtonBlock(0)}</Row>
-                  <br />
+                  <Row className="btn-row">{this.renderButtonBlock(0)}</Row>
                   <Row>{this.renderButtonBlock(1)}</Row>
-                  <br />
                   <Row>{this.renderButtonBlock(2)}</Row>
-                  <br />
                   <Row>{this.renderButtonBlock(3)}</Row>
                 </Container>
               </Col>
               {this.renderButtonBlock(4)}
             </Row>
-            <br />
             <Row className="justify-content-center">
               {this.renderButtonBlock(5)}
             </Row>
